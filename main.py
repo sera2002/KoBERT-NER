@@ -1,5 +1,8 @@
 import argparse
 
+from kobert_tokenizer import KoBERTTokenizer
+import gluonnlp as nlp
+
 from trainer import Trainer
 from utils import init_logger, load_tokenizer, set_seed, MODEL_CLASSES, MODEL_PATH_MAP
 from data_loader import load_and_cache_examples
@@ -9,7 +12,9 @@ def main(args):
     init_logger()
     set_seed(args)
     
-    tokenizer = load_tokenizer(args)
+    tokenizer = KoBERTTokenizer.from_pretrained('skt/kobert-base-v1')
+    vocab = nlp.vocab.BERTVocab.from_sentencepiece(tokenizer.vocab_file, padding_token='[PAD]')
+    #load_tokenizer(args)
 
     train_dataset = None
     dev_dataset = None
