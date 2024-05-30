@@ -81,7 +81,7 @@ class Trainer(object):
 
         train_iterator = trange(int(self.args.num_train_epochs), desc="Epoch")
 
-        for _ in train_iterator:
+        for epoch in train_iterator:
             epoch_iterator = tqdm(train_dataloader, desc="Iteration")
             for step, batch in enumerate(epoch_iterator):
                 self.model.train()
@@ -121,6 +121,11 @@ class Trainer(object):
             if 0 < self.args.max_steps < global_step:
                 train_iterator.close()
                 break
+
+            # 매 5번째 에포크마다 평가 수행
+            if (epoch + 1) % 5 == 0:
+                self.evaluate("dev", global_step)
+
 
         return global_step, tr_loss / global_step
 
