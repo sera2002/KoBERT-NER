@@ -20,10 +20,12 @@ def main(args):
     dev_dataset = None
     test_dataset = None
 
-    if args.do_train or args.do_eval:
+    if args.do_eval:
         test_dataset = load_and_cache_examples(args, tokenizer, mode="test")
     if args.do_train:
         train_dataset = load_and_cache_examples(args, tokenizer, mode="train")
+        dev_dataset = load_and_cache_examples(args, tokenizer, mode="dev")
+        print("validation dataset 크기 : ", len(dev_dataset))
 
     trainer = Trainer(args, train_dataset, dev_dataset, test_dataset)
 
@@ -43,8 +45,9 @@ if __name__ == '__main__':
     parser.add_argument("--data_dir", default="./data", type=str, help="The input data dir")
     parser.add_argument("--pred_dir", default="./preds", type=str, help="The prediction file dir")
 
-    parser.add_argument("--train_file", default="train.tsv", type=str, help="Train file")
-    parser.add_argument("--test_file", default="test.tsv", type=str, help="Test file")
+    parser.add_argument("--train_file", default="data_NXNE/train.tsv", type=str, help="Train file")
+    parser.add_argument("--test_file", default="data_NXNE/test.tsv", type=str, help="Test file")
+    parser.add_argument("--dev_file", default="data_NXNE/validation.tsv", type=str, help="Validation file")
     parser.add_argument("--label_file", default="label.txt", type=str, help="Slot Label file")
     parser.add_argument("--write_pred", action="store_true", help="Write prediction during evaluation")
 
