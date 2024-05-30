@@ -82,10 +82,11 @@ class Trainer(object):
         train_iterator = trange(int(self.args.num_train_epochs), desc="Epoch")
 
         for epoch in train_iterator:
-            epoch_iterator = tqdm(train_dataloader, desc="Training", unit="batch", disable=True)
-            num_steps = len(epoch_iterator) # the number of steps per epoch
+            #epoch_iterator = tqdm(train_dataloader, desc="Training", unit="batch", disable=True)
+            num_steps = len(train_dataloader) # the number of steps per epoch
+            logger.info(f"**** The number of steps per epoch ({epoch}) for train dataset: {num_steps} ****")
 
-            for step, batch in enumerate(epoch_iterator):
+            for step, batch in tqdm(enumerate(train_dataloader)):
                 self.model.train()
                 batch = tuple(t.to(self.device) for t in batch)  # GPU or CPU
                 inputs = {'input_ids': batch[0],
@@ -110,15 +111,15 @@ class Trainer(object):
                     self.model.zero_grad()
                     global_step += 1
 
-                    if self.args.logging_steps > 0 and global_step % self.args.logging_steps == 0:
-                        self.evaluate("test", global_step)
+                    #if self.args.logging_steps > 0 and global_step % self.args.logging_steps == 0:
+                    #    self.evaluate("test", global_step)
 
-                    if self.args.save_steps > 0 and global_step % self.args.save_steps == 0:
-                        self.save_model()
+                    #if self.args.save_steps > 0 and global_step % self.args.save_steps == 0:
+                    #    self.save_model()
 
-                if 0 < self.args.max_steps < global_step:
-                    epoch_iterator.close()
-                    break
+                #if 0 < self.args.max_steps < global_step:
+                #    epoch_iterator.close()
+                #    break
 
             avg_train_loss = tr_loss / num_steps
             print(f"Epoch {epoch + 1} Train loss: {avg_train_loss}")
