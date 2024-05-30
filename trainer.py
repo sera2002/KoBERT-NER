@@ -82,11 +82,11 @@ class Trainer(object):
         train_iterator = trange(int(self.args.num_train_epochs), desc="Epoch")
 
         for epoch in train_iterator:
-            #epoch_iterator = tqdm(train_dataloader, desc="Training", unit="batch", disable=True)
+            epoch_iterator = tqdm(train_dataloader, desc="Training", unit="batch", disable=True)
             num_steps = len(train_dataloader) # the number of steps per epoch
             logger.info(f"**** The number of steps per epoch ({epoch}) for train dataset: {num_steps} ****")
 
-            for step, batch in tqdm(enumerate(train_dataloader)):
+            for step, batch in enumerate(epoch_iterator):
                 self.model.train()
                 batch = tuple(t.to(self.device) for t in batch)  # GPU or CPU
                 inputs = {'input_ids': batch[0],
