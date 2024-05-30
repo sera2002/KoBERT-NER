@@ -82,10 +82,10 @@ class Trainer(object):
         train_iterator = trange(int(self.args.num_train_epochs), desc="Epoch")
 
         for epoch in train_iterator:
-            epoch_iterator = tqdm(train_dataloader)
+            epoch_iterator = tqdm(train_dataloader, desc="Training", unit="batch", disable=True)
             num_steps = len(epoch_iterator) # the number of steps per epoch
 
-            for step, batch in tqdm(enumerate(epoch_iterator)):
+            for step, batch in enumerate(epoch_iterator):
                 self.model.train()
                 batch = tuple(t.to(self.device) for t in batch)  # GPU or CPU
                 inputs = {'input_ids': batch[0],
@@ -122,7 +122,7 @@ class Trainer(object):
 
             avg_train_loss = tr_loss / num_steps
             print(f"Epoch {epoch + 1} Train loss: {avg_train_loss}")
-
+            
             if 0 < self.args.max_steps < global_step:
                 train_iterator.close()
                 break
