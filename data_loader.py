@@ -61,8 +61,8 @@ class InputFeatures(object):
         return json.dumps(self.to_dict(), indent=2, sort_keys=True) + "\n"
 
 
-class NaverNerProcessor(object):
-    """Processor for the Naver NER data set """
+class NerProcessor(object):
+    """Processor for the NER data set """
 
     def __init__(self, args):
         self.args = args
@@ -115,7 +115,7 @@ class NaverNerProcessor(object):
 
 
 processors = {
-    "naver-ner": NaverNerProcessor,
+    "ner": NerProcessor,
 }
 
 
