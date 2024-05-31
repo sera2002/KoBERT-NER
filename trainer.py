@@ -6,6 +6,7 @@ from tqdm import tqdm, trange
 import numpy as np
 import torch
 from torch.utils.data import DataLoader, RandomSampler, SequentialSampler
+from torch.utils.tensorboard import SummaryWriter
 from transformers import AdamW, get_linear_schedule_with_warmup
 
 from utils import compute_metrics, get_labels, get_test_texts, show_report, MODEL_CLASSES
@@ -45,6 +46,9 @@ class Trainer(object):
             if os.path.exists(args.pred_dir):
                 shutil.rmtree(args.pred_dir)
 
+        # Tensorboard writer
+        self.writer = SummaryWriter()
+
     def train(self):
         train_sampler = RandomSampler(self.train_dataset)
         train_dataloader = DataLoader(self.train_dataset, sampler=train_sampler, batch_size=self.args.train_batch_size)
@@ -82,6 +86,7 @@ class Trainer(object):
         train_iterator = trange(int(self.args.num_train_epochs), desc="Epoch")
 
         for epoch in train_iterator:
+            tr_loss_epoch = 0
             epoch_iterator = tqdm(train_dataloader, desc="Training", unit="batch", disable=True)
             num_steps = len(train_dataloader) # the number of steps per epoch
             logger.info(f"**** The number of steps per epoch ({epoch}) for train dataset: {num_steps} ****")
@@ -103,12 +108,15 @@ class Trainer(object):
                 loss.backward()
 
                 tr_loss += loss.item()
+                tr_loss_epoch += loss.item()
                 if (step + 1) % self.args.gradient_accumulation_steps == 0:
                     torch.nn.utils.clip_grad_norm_(self.model.parameters(), self.args.max_grad_norm)
 
                     optimizer.step()
                     scheduler.step()  # Update learning rate schedule
                     self.model.zero_grad()
+                    self.writer.add_scalar('Loss/train', loss.item(), global_step)
+                    
                     global_step += 1
 
                     #if self.args.logging_steps > 0 and global_step % self.args.logging_steps == 0:
@@ -121,17 +129,21 @@ class Trainer(object):
                 #    epoch_iterator.close()
                 #    break
 
-            avg_train_loss = tr_loss / num_steps
+            avg_train_loss = tr_loss_epoch / num_steps
             print(f"Epoch {epoch + 1} Train loss: {avg_train_loss}")
-            
-            if 0 < self.args.max_steps < global_step:
-                train_iterator.close()
-                break
+            self.writer.add_scalar('Loss_per_epoch/train', avg_train_loss, epoch + 1)
+            self.writer.flush()
 
-            # 매 5번째 에포크마다 평가 수행
+            # if 0 < self.args.max_steps < global_step:
+            #     train_iterator.close()
+            #     break
+
+            # 매 2번째 에포크마다 평가 수행 및 모델 저장
             if (epoch + 1) % 5 == 0:
                 self.evaluate("dev", global_step)
+                self.save_model(epoch+1)
 
+        self.writer.close()
 
         return global_step, tr_loss / global_step
 
@@ -157,7 +169,7 @@ class Trainer(object):
 
         self.model.eval()
 
-        for batch in tqdm(eval_dataloader, desc="Evaluating"):
+        for batch in tqdm(eval_dataloader, desc="Evaluating", disable=True):
             batch = tuple(t.to(self.device) for t in batch)
             with torch.no_grad():
                 inputs = {'input_ids': batch[0],
@@ -183,6 +195,8 @@ class Trainer(object):
         results = {
             "loss": eval_loss
         }
+
+        self.writer.add_scalar('Loss_per_epoch/validation', eval_loss, step)
 
         # Slot result
         preds = np.argmax(preds, axis=2)
@@ -216,15 +230,17 @@ class Trainer(object):
 
         return results
 
-    def save_model(self):
+    def save_model(self, epoch):
         # Save model checkpoint (Overwrite)
         if not os.path.exists(self.args.model_dir):
             os.makedirs(self.args.model_dir)
         model_to_save = self.model.module if hasattr(self.model, 'module') else self.model
-        model_to_save.save_pretrained(self.args.model_dir)
+        model_file = os.path.join(self.args.model_dir, f"model_epoch_{epoch}.bin")
+        model_to_save.save_pretrained(model_file)
 
         # Save training arguments together with the trained model
-        torch.save(self.args, os.path.join(self.args.model_dir, 'training_args.bin'))
+        args_file = os.path.join(self.args.model_dir, f'training_args_epoch_{epoch}.bin')
+        torch.save(self.args, args_file)
         logger.info("Saving model checkpoint to %s", self.args.model_dir)
 
     def load_model(self):
