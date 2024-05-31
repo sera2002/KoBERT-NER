@@ -116,6 +116,7 @@ class Trainer(object):
                     scheduler.step()  # Update learning rate schedule
                     self.model.zero_grad()
                     self.writer.add_scalar('Loss/train', loss.item(), global_step)
+                    self.writer.flush()
                     
                     global_step += 1
 
