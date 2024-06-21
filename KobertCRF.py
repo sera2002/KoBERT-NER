@@ -26,6 +26,8 @@ class KobertCRF(nn.Module):
         print("forward start")
         if mask is None:
             attention_mask = input_ids.ne(self.vocab.token_to_idx[self.vocab.padding_token]).float()
+        else:
+            attention_mask = mask
         print("attention_mask: ", attention_mask)
 
         # outputs: (last_encoder_layer, pooled_output, attention_weight)
