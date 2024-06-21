@@ -4,6 +4,7 @@ from kobert_tokenizer import KoBERTTokenizer
 import gluonnlp as nlp
 
 from trainer import Trainer
+from trainer_crf import TrainerCRF
 from utils import init_logger, load_tokenizer, set_seed, MODEL_CLASSES, MODEL_PATH_MAP
 from data_loader import load_and_cache_examples
 
@@ -27,7 +28,10 @@ def main(args):
         dev_dataset = load_and_cache_examples(args, tokenizer, mode="dev")
         print("validation dataset 크기 : ", len(dev_dataset))
 
-    trainer = Trainer(args, train_dataset, dev_dataset, test_dataset)
+    if args.crf:
+        trainer = TrainerCRF(args, train_dataset, dev_dataset, test_dataset)
+    else:
+        trainer = Trainer(args, train_dataset, dev_dataset, test_dataset)
 
     if args.do_train:
         trainer.train()
@@ -40,6 +44,7 @@ def main(args):
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
 
+    parser.add_argument("--crf", default=False, type=bool, help="CRF Layer")
     parser.add_argument("--task", default="ner", type=str, help="The name of the task to train")
     parser.add_argument("--model_dir", default="./model", type=str, help="Path to save, load model")
     parser.add_argument("--data_dir", default="./data", type=str, help="The input data dir")

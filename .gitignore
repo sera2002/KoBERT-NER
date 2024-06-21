@@ -1,5 +1,6 @@
 # dataset
 data/data_NXNE
+load_news/
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
