@@ -29,7 +29,7 @@ def main(args):
         print("validation dataset 크기 : ", len(dev_dataset))
 
     if args.crf:
-        trainer = TrainerCRF(args, train_dataset, dev_dataset, test_dataset)
+        trainer = TrainerCRF(args, train_dataset, dev_dataset, test_dataset, vocab)
     else:
         trainer = Trainer(args, train_dataset, dev_dataset, test_dataset)
 

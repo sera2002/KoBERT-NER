@@ -15,11 +15,12 @@ from KobertCRF import KobertCRF
 logger = logging.getLogger(__name__)
 
 class TrainerCRF(object):
-    def __init__(self, args, train_dataset=None, dev_dataset=None, test_dataset=None):
+    def __init__(self, args, train_dataset=None, dev_dataset=None, test_dataset=None, vocab=None):
         self.args = args
         self.train_dataset = train_dataset
         self.dev_dataset = dev_dataset
         self.test_dataset = test_dataset
+        self.vocab = vocab
 
         self.label_lst = get_labels(args)
         self.num_labels = len(self.label_lst)
@@ -30,7 +31,7 @@ class TrainerCRF(object):
             'dropout': 0.1,
             'hidden_size': 768  # 수치 조정 필요
         }
-        self.model = KobertCRF(config=model_config, num_classes=self.num_labels)
+        self.model = KobertCRF(config=model_config, num_classes=self.num_labels, vocab=vocab)
 
         # GPU or CPU
         self.device = "cuda" if torch.cuda.is_available() and not args.no_cuda else "cpu"
