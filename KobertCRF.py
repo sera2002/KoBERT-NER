@@ -23,6 +23,7 @@ class KobertCRF(nn.Module):
         self.crf = CRF(num_labels=num_classes)
 
     def forward(self, input_ids, token_type_ids=None, tags=None):
+        print("forward start")
         attention_mask = input_ids.ne(self.vocab.token_to_idx[self.vocab.padding_token]).float()
 
         # outputs: (last_encoder_layer, pooled_output, attention_weight)
