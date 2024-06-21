@@ -94,7 +94,7 @@ class TrainerCRF(object):
                 batch = tuple(t.to(self.device) for t in batch)  # GPU or CPU
                 print("batch: ", batch)
                 inputs = {'input_ids': batch[0],
-                          #'mask': batch[1],
+                          'mask': batch[1],
                           'tags': batch[3]}
                 if self.args.model_type != 'distilkobert':
                     inputs['token_type_ids'] = batch[2]
