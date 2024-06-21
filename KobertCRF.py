@@ -37,8 +37,10 @@ class KobertCRF(nn.Module):
         last_encoder_layer = outputs[0]
         last_encoder_layer = self.dropout(last_encoder_layer)
         emissions = self.position_wise_ff(last_encoder_layer)
-
+        
+        print("output: ", outputs)
         if tags is not None:
+            print("here is started")
             log_likelihood, sequence_of_tags = self.crf(emissions, tags), self.crf.decode(emissions)
             print("here!")
             return log_likelihood, sequence_of_tags
