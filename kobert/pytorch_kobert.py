@@ -24,7 +24,7 @@ from transformers import BertModel, BertConfig
 # from pytorch_pretrained_bert import BertModel, BertConfig
 import gluonnlp as nlp
 
-from model_utils import download as _download
+from kobert.model_utils import download as _download
 
 kobert_models = {
     'pytorch_kobert': {
