@@ -92,13 +92,13 @@ class TrainerCRF(object):
             for step, batch in enumerate(epoch_iterator):
                 self.model.train()
                 batch = tuple(t.to(self.device) for t in batch)  # GPU or CPU
-                print("batch: ", batch)
+                #print("batch: ", batch)
                 inputs = {'input_ids': batch[0],
                           'mask': batch[1],
                           'tags': batch[3]}
                 if self.args.model_type != 'distilkobert':
                     inputs['token_type_ids'] = batch[2]
-                print("inputs: ", inputs)
+                #print("inputs: ", inputs)
                 outputs = self.model(**inputs)
                 loss = outputs[0]
 
@@ -106,7 +106,7 @@ class TrainerCRF(object):
                     loss = loss / self.args.gradient_accumulation_steps
                 
                 loss = loss.mean()
-                print("loss: ", loss.item())
+                #print("loss: ", loss.item())
                 loss.backward()
 
                 tr_loss += loss.item()

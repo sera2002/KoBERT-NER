@@ -23,12 +23,12 @@ class KobertCRF(nn.Module):
         self.crf = CRF(num_labels=num_classes)
 
     def forward(self, input_ids, token_type_ids=None, tags=None, mask=None):
-        print("forward start")
+        #print("forward start")
         if mask is None:
             attention_mask = input_ids.ne(self.vocab.token_to_idx[self.vocab.padding_token]).float()
         else:
             attention_mask = mask
-        print("attention_mask: ", attention_mask)
+        #print("attention_mask: ", attention_mask)
 
         # outputs: (last_encoder_layer, pooled_output, attention_weight)
         outputs = self.bert(input_ids=input_ids,
@@ -38,9 +38,9 @@ class KobertCRF(nn.Module):
         last_encoder_layer = self.dropout(last_encoder_layer)
         emissions = self.position_wise_ff(last_encoder_layer)
         
-        print("output: ", outputs)
+        #print("output: ", outputs)
         if tags is not None:
-            print("here is started")
+            #print("here is started")
             tags = torch.where(tags == -100, torch.tensor(0).to(tags.device), tags)
             log_likelihood = self.crf(emissions, tags, mask=attention_mask.byte())
             sequence_of_tags = self.crf.viterbi_decode(emissions, mask=attention_mask.byte())
