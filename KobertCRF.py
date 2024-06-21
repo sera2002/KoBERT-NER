@@ -25,11 +25,13 @@ class KobertCRF(nn.Module):
     def forward(self, input_ids, token_type_ids=None, tags=None):
         print("forward start")
         attention_mask = input_ids.ne(self.vocab.token_to_idx[self.vocab.padding_token]).float()
+        print("attention_mask: ", attention_mask)
 
         # outputs: (last_encoder_layer, pooled_output, attention_weight)
         outputs = self.bert(input_ids=input_ids,
                             token_type_ids=token_type_ids,
                             attention_mask=attention_mask)
+        print("output: ", outputs)
         last_encoder_layer = outputs[0]
         last_encoder_layer = self.dropout(last_encoder_layer)
         emissions = self.position_wise_ff(last_encoder_layer)
