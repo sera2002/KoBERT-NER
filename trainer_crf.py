@@ -104,7 +104,9 @@ class TrainerCRF(object):
 
                 if self.args.gradient_accumulation_steps > 1:
                     loss = loss / self.args.gradient_accumulation_steps
-                print("loss: ", loss)
+                
+                loss = loss.mean()
+                print("loss: ", loss.item())
                 loss.backward()
 
                 tr_loss += loss.item()
