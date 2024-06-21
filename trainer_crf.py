@@ -176,8 +176,8 @@ class TrainerCRF(object):
             batch = tuple(t.to(self.device) for t in batch)
             with torch.no_grad():
                 inputs = {'input_ids': batch[0],
-                          'attention_mask': batch[1],
-                          'labels': batch[3]}
+                          'mask': batch[1],
+                          'tags': batch[3]}
                 if self.args.model_type != 'distilkobert':
                     inputs['token_type_ids'] = batch[2]
                 outputs = self.model(**inputs)
