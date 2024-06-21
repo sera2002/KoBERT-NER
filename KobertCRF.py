@@ -18,8 +18,8 @@ class KobertCRF(nn.Module):
             self.bert = BertModel(config=BertConfig.from_dict(bert_config))
             self.vocab = vocab
 
-        self.dropout = nn.Dropout(config.dropout)
-        self.position_wise_ff = nn.Linear(config.hidden_size, num_classes)
+        self.dropout = nn.Dropout(config['dropout'])
+        self.position_wise_ff = nn.Linear(config['hidden_size'], num_classes)
         self.crf = CRF(num_labels=num_classes)
 
     def forward(self, input_ids, token_type_ids=None, tags=None):
