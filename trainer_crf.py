@@ -33,7 +33,8 @@ class TrainerCRF(object):
                                                         finetuning_task=args.task,
                                                         id2label={str(i): label for i, label in enumerate(self.label_lst)},
                                                         label2id={label: i for i, label in enumerate(self.label_lst)},
-                                                        hidden_dropout_prob=0.1)
+                                                        dropout=0.1,
+                                                        hidden_size=768)
         self.model = KobertCRF(config=self.config, num_classes=self.num_labels, vocab=vocab)
 
         # GPU or CPU
