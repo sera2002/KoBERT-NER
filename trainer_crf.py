@@ -186,16 +186,16 @@ class TrainerCRF(object):
                 eval_loss += tmp_eval_loss.mean().item()
             nb_eval_steps += 1
 
-            #print("inputs[labels]: ", inputs["labels"])
-            #print("logis: ", logits)
+            print("logis: ", logits)
+            print("inputs[tags]: ", inputs["tags"])
 
             # Slot prediction
             if preds is None:
                 preds = torch.tensor(logits).detach().cpu().numpy()
-                out_label_ids = torch.tensor(inputs["labels"]).detach().cpu().numpy()
+                out_label_ids = torch.tensor(inputs["tags"]).detach().cpu().numpy()
             else:
                 preds = np.append(preds, torch.tensor(logits).detach().cpu().numpy(), axis=0)
-                out_label_ids = np.append(out_label_ids, torch.tensor(inputs["labels"]).detach().cpu().numpy(), axis=0)
+                out_label_ids = np.append(out_label_ids, torch.tensor(inputs["tags"]).detach().cpu().numpy(), axis=0)
 
         eval_loss = eval_loss / nb_eval_steps
         results = {
