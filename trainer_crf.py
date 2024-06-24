@@ -186,6 +186,9 @@ class TrainerCRF(object):
                 eval_loss += tmp_eval_loss.mean().item()
             nb_eval_steps += 1
 
+            print("inputs[labels]: ", inputs["labels"])
+            print("logis: ", logits)
+
             # Slot prediction
             if preds is None:
                 preds = logits.detach().cpu().numpy()
