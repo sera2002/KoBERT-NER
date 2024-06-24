@@ -41,7 +41,6 @@ class KobertCRF(nn.Module):
         #print("output: ", outputs)
         if tags is not None:
             #print("here is started")
-            tags = torch.where(tags == -100, torch.tensor(0).to(tags.device), tags)
             log_likelihood = self.crf(emissions, tags, mask=attention_mask.byte())
             sequence_of_tags = self.crf.viterbi_decode(emissions, mask=attention_mask.byte())
             return log_likelihood, sequence_of_tags

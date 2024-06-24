@@ -27,11 +27,14 @@ class TrainerCRF(object):
         # Use cross entropy ignore index as padding label id so that only real label ids contribute to the loss later
         self.pad_token_label_id = torch.nn.CrossEntropyLoss().ignore_index
 
-        model_config = {
-            'dropout': 0.1,
-            'hidden_size': 768  # 수치 조정 필요
-        }
-        self.model = KobertCRF(config=model_config, num_classes=self.num_labels, vocab=vocab)
+        self.config_class, self.model_class, _ = MODEL_CLASSES[args.model_type]
+        self.config = self.config_class.from_pretrained(args.model_name_or_path,
+                                                        num_labels=self.num_labels,
+                                                        finetuning_task=args.task,
+                                                        id2label={str(i): label for i, label in enumerate(self.label_lst)},
+                                                        label2id={label: i for i, label in enumerate(self.label_lst)},
+                                                        hidden_dropout_prob=0.1)
+        self.model = KobertCRF(config=self.config, num_classes=self.num_labels, vocab=vocab)
 
         # GPU or CPU
         self.device = "cuda" if torch.cuda.is_available() and not args.no_cuda else "cpu"
