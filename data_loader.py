@@ -147,7 +147,7 @@ def convert_examples_to_features(examples, max_seq_len, tokenizer,
                 word_tokens = [unk_token]  # For handling the bad-encoded word
             tokens.extend(word_tokens)
             # Use the real label id for the first token of the word, and padding ids for the remaining tokens
-            label_ids.extend([int(slot_label)] + [pad_token_label_id] * (len(word_tokens) - 1))
+            label_ids.extend([int(slot_label)])
 
         # Account for [CLS] and [SEP]
         special_tokens_count = 2
