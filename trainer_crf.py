@@ -145,9 +145,9 @@ class TrainerCRF(object):
             #     break
 
             # 2 에포크마다 평가 수행 및 모델 저장
-            if epoch % 2 == 0:
-                self.evaluate("dev", global_step)
-                self.save_model(epoch+1)
+            #if epoch % 2 == 0:
+            #    self.evaluate("dev", global_step)
+            #    self.save_model(epoch+1)
 
         self.writer.close()
 
