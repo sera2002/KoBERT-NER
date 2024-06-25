@@ -14,7 +14,7 @@ class KobertCRF(nn.Module):
         if vocab is None:
             self.bert, self.vocab = get_pytorch_kobert_model()
         else:
-            self.bert = BertModel(config=BertConfig.from_dict(bert_config))
+            self.bert = BertModel.from_pretrained("monologg/kobert", config=BertConfig.from_dict(bert_config))
             self.vocab = vocab
 
         self.dropout = nn.Dropout(config.hidden_dropout_prob)
