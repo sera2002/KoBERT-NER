@@ -40,6 +40,8 @@ class KobertCRF(nn.Module):
         #print("output: ", outputs)
         if tags is not None:
             #print("here is started")
+            print("attention_mask: ", attention_mask)
+            print("tags: ", tags)
             log_likelihood = self.crf(emissions, tags, mask=attention_mask.byte())
             sequence_of_tags = self.crf.viterbi_decode(emissions, mask=attention_mask.byte())
             return log_likelihood, sequence_of_tags
