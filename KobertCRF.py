@@ -47,14 +47,11 @@ class KobertCRF(nn.Module):
             # print("tags: ", tags)
             
             # change pad token label ids to -1
-            #tags[tags == -100] = -1
+            tags[tags == -100] = 0
 
             # make mask for tags
-            mask_tensor = torch.zeros_like(tags)
-            mask_tensor[tags != -100] = 1
-            
-            log_likelihood = self.crf(emissions, tags, mask=mask_tensor.byte())
-            sequence_of_tags = self.crf.decode(emissions, mask=mask_tensor.byte())
+            log_likelihood = -self.crf(emissions, tags, mask=attention_mask.byte(), reduction="mean")
+            sequence_of_tags = self.crf.decode(emissions, mask=attention_mask.byte())
             return log_likelihood, sequence_of_tags
         else:
             sequence_of_tags = self.crf.decode(emissions)
