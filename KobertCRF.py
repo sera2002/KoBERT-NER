@@ -3,9 +3,8 @@ import torch
 from torch import nn
 from torch.nn.utils.rnn import pack_padded_sequence, pad_packed_sequence
 from transformers import BertModel, BertConfig
-from kobert.pytorch_kobert import get_pytorch_kobert_model, bert_config
-
 from TorchCRF import CRF
+from kobert.pytorch_kobert import get_pytorch_kobert_model, bert_config
 
 class KobertCRF(nn.Module):
     """ KoBERT with CRF """
@@ -20,7 +19,7 @@ class KobertCRF(nn.Module):
 
         self.dropout = nn.Dropout(config.hidden_dropout_prob)
         self.position_wise_ff = nn.Linear(config.hidden_size, num_classes)
-        self.crf = CRF(num_labels=num_classes)
+        self.crf = CRF(num_tags=num_classes)
 
     def forward(self, input_ids, token_type_ids=None, tags=None, mask=None):
         #print("forward start")
