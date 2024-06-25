@@ -46,9 +46,9 @@ class KobertCRF(nn.Module):
             # print("attention_mask: ", attention_mask)
             # print("tags: ", tags)
             
-            # tags 기준으로 attention_mask 변경(?)
-            all_first_timestep_on = all(attention_mask[:, 0].tolist())
-            print("Is all first timestep on?: ", all_first_timestep_on)
+            # change pad token label ids to -1
+            tags[tags == -100] = -1
+            
             log_likelihood = self.crf(emissions, tags, mask=attention_mask.byte())
             sequence_of_tags = self.crf.decode(emissions, mask=attention_mask.byte())
             return log_likelihood, sequence_of_tags
