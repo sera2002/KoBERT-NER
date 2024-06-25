@@ -19,7 +19,7 @@ class KobertCRF(nn.Module):
 
         self.dropout = nn.Dropout(config.hidden_dropout_prob)
         self.position_wise_ff = nn.Linear(config.hidden_size, num_classes)
-        self.crf = CRF(num_tags=num_classes)
+        self.crf = CRF(num_tags=num_classes, batch_first=True)
 
     def forward(self, input_ids, token_type_ids=None, tags=None, mask=None):
         #print("forward start")
@@ -49,7 +49,7 @@ class KobertCRF(nn.Module):
             # tags 기준으로 attention_mask 변경(?)
             all_first_timestep_on = all(attention_mask[:, 0].tolist())
             print("Is all first timestep on?: ", all_first_timestep_on)
-            log_likelihood = self.crf(emissions, tags, mask=attention_mask.byte(), batch_first=True)
+            log_likelihood = self.crf(emissions, tags, mask=attention_mask.byte())
             sequence_of_tags = self.crf.decode(emissions, mask=attention_mask.byte())
             return log_likelihood, sequence_of_tags
         else:
