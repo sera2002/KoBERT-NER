@@ -3,7 +3,7 @@ import torch
 from torch import nn
 from torch.nn.utils.rnn import pack_padded_sequence, pad_packed_sequence
 from transformers import BertModel, BertConfig
-from TorchCRF import CRF
+from torchcrf import CRF
 from kobert.pytorch_kobert import get_pytorch_kobert_model, bert_config
 
 class KobertCRF(nn.Module):
