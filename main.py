@@ -13,12 +13,14 @@ def main(args):
     init_logger()
     set_seed(args)
     
+    vocab = None
+    
     if args.model_type == 'kobert':
         tokenizer = KoBERTTokenizer.from_pretrained('skt/kobert-base-v1')
+        vocab = nlp.vocab.BERTVocab.from_sentencepiece(tokenizer.vocab_file, padding_token='[PAD]')
     else:
         _, _, tokenizerModel = MODEL_CLASSES[args.model_type]
         tokenizer = tokenizerModel.from_pretrained(MODEL_PATH_MAP[args.model_type])
-    vocab = nlp.vocab.BERTVocab.from_sentencepiece(tokenizer.vocab_file, padding_token='[PAD]')
     #load_tokenizer(args)
 
     train_dataset = None
