@@ -197,7 +197,8 @@ class Trainer(object):
             "loss": eval_loss
         }
 
-        self.writer.add_scalar('Loss_per_epoch/validation', eval_loss, step)
+        if mode == 'dev':
+            self.writer.add_scalar('Loss_per_epoch/validation', eval_loss, step)
 
         # Slot result
         preds = np.argmax(preds, axis=2)
